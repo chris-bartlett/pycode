@@ -3,6 +3,7 @@ from langchain.vectorstores.chroma import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
+from redundant_filter_retriever import RedundantFilterRetriever
 
 load_dotenv()
 
@@ -19,10 +20,16 @@ db = Chroma(
 )
 
 # set up retriever to get documents, which will call seat similarity_search
-retriever = db.as_retriever()
+# retriever = db.as_retriever()
+# use RedundantFilterRetriever to only pull back unique docs rather than dupes
+retriever = RedundantFilterRetriever(
+    embeddings=embeddings, 
+    chroma=db
+)
+
 
 #  build thr chain with retriever and chat model
-#  chain type=stuff just stuff everything into the prompt
+#  chain type=stuff just stuff everything into the prompt - stuff is most basic - gives best answer at the moment 
 chain = RetrievalQA.from_chain_type(
     llm=chat,
     retriever=retriever,

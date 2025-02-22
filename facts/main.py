@@ -33,7 +33,7 @@ db = Chroma.from_documents(
 # store in vector store
 results = db.similarity_search(
     "What is an interesting fact about the English language?",
-    k=2
+    k=4
 )
 
 for result in results:
