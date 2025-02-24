@@ -11,14 +11,18 @@ from dotenv import load_dotenv
 
 from tools.sql import run_query_tool, list_tables, describe_tables_tool
 from tools.report import write_report_tool
-
+from handlers.chat_model_start_handler import ChatModelStartHandler
 
 load_dotenv()
+
+handler = ChatModelStartHandler()
 
 # agent_scratchpad is like a simplifed form of memory tracking conversation almost back and forth with tool requests and answers (original message, function call, and answer)
 #  for one agent_executor only. No memeory between different agent_executors
 #  can add memory and preserve the final ai message that is returned from the final function call along with the initial human message sent.
-chat = ChatOpenAI()
+chat = ChatOpenAI(
+    callbacks=[handler]
+)
 
 tables = list_tables()
 
@@ -56,14 +60,14 @@ agent = OpenAIFunctionsAgent(
 # different ways to create agent - can initialize_agent which automatically creates an agent for you where above is manual
 agent_executor = AgentExecutor(
     agent=agent,
-    verbose=True,
+    # verbose=True,
     tools=tools,
     memory=memory
 )
 
 # agent_executor("How many users are in the database?")
 #  agent_executor("How many users have provided a shipping address?")
-# agent_executor("Summarize the top 5 most popular products. Write the results to a report file.?")
+agent_executor("Summarize the top 5 most popular products. Write the results to a report file.?")
 
 # # testing memory
 # agent_executor("How many orders were there? Write the results to a report file?")
