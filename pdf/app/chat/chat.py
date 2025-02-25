@@ -1,16 +1,17 @@
 from app.chat.models import ChatArgs
-
+from app.chat.vector_stores.pinecone import build_retriever
+from langchain.chains import ConversationalRetrievalChain
+from app.chat.llm.chatopenai import build_llm
+from app.chat.memories.sql_memories import build_memory
 
 def build_chat(chat_args: ChatArgs):
-    """
-    :param chat_args: ChatArgs object containing
-        conversation_id, pdf_id, metadata, and streaming flag.
+    retriever = build_retriever(chat_args)
+    llm = build_llm(chat_args)
+    memory = build_memory(chat_args)
 
-    :return: A chain
-
-    Example Usage:
-
-        chain = build_chat(chat_args)
-    """
-
-    pass
+    return ConversationalRetrievalChain.from_llm(
+        retriever=retriever,
+        llm=llm,
+        memory=memory
+    )
+    
