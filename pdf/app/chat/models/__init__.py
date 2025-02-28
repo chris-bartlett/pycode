@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Extra
-
-
+from pydantic.v1 import BaseModel
+from pydantic import Extra
+ 
 class Metadata(BaseModel, extra=Extra.allow):
     conversation_id: str
     user_id: str
